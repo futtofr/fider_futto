@@ -1,0 +1,74 @@
+version: "3.9"
+
+# =============================================================================
+# Fider Production Deployment
+# =============================================================================
+# This file deploys Fider (roadmap/feedback platform) as a standalone service
+# that connects to shared infrastructure from landing-futto:
+# - PostgreSQL database (futto-landing-postgres)
+# - Nginx reverse proxy (futto-nginx)
+# - External network (futto-landing-network)
+#
+# Usage:
+#   docker-compose -f docker-compose.production.yml up -d
+#   docker-compose -f docker-compose.production.yml logs -f futto-fider
+#   docker-compose -f docker-compose.production.yml down
+# =============================================================================
+
+services:
+  futto-fider:
+    build:
+      context: .
+      args:
+        # Core Configuration
+        PORT: "3005"
+        BASE_URL: https://roadmap.futto.fr
+        JWT_SECRET: ${FIDER_JWT_SECRET}
+
+        # Database Configuration
+        FIDER_DB_PASSWORD: ${FIDER_DB_PASSWORD}
+
+        # Email Configuration (Brevo SMTP)
+        BREVO_NOREPLY: ${BREVO_NOREPLY}
+        BREVO_SMTP_HOST: ${BREVO_SMTP_HOST}
+        BREVO_SMTP_USERNAME: ${BREVO_SMTP_USERNAME}
+        BREVO_SMTP_PASSWORD: ${BREVO_SMTP_PASSWORD}
+
+        # Build Metadata
+        ENVIRONMENT: production
+        COMMITHASH: ${COMMITHASH:-unknown}
+        VERSION: ${VERSION:-latest}
+    image: futto-fider:production
+    container_name: futto-fider
+    hostname: futto-fider
+    restart: always
+    platform: linux/arm64
+    expose:
+      - "3005"
+    environment:
+      # Note: Environment variables are baked into .env file during build
+      # These can override the baked-in values if needed
+      PORT: "3005"
+      BASE_URL: https://roadmap.futto.fr
+      DATABASE_URL: postgresql://fider_user:${FIDER_DB_PASSWORD}@futto-landing-postgres:5432/fider?sslmode=disable
+      JWT_SECRET: ${FIDER_JWT_SECRET}
+      EMAIL_NOREPLY: ${BREVO_NOREPLY}
+      EMAIL_SMTP_HOST: ${BREVO_SMTP_HOST}
+      EMAIL_SMTP_PORT: 587
+      EMAIL_SMTP_USERNAME: ${BREVO_SMTP_USERNAME}
+      EMAIL_SMTP_PASSWORD: ${BREVO_SMTP_PASSWORD}
+      EMAIL_SMTP_ENABLE_STARTTLS: 'true'
+    networks:
+      - futto-landing-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3005/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  futto-landing-network:
+    external: true
+    # This network is created and managed by landing-futto
+    # Ensure it exists: docker network create futto-landing-network

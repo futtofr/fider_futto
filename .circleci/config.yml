@@ -1,0 +1,128 @@
+version: 2.1
+
+# =============================================================================
+# CircleCI Configuration for Fider Deployment
+# =============================================================================
+# This pipeline deploys the Fider roadmap/feedback platform to EC2
+# It shares infrastructure with landing-futto (nginx, postgres, network)
+# =============================================================================
+
+master_only: &master_only
+  filters:
+    branches:
+      only:
+        - master
+
+executors:
+  deployer:
+    working_directory: ~/project
+    docker:
+      - image: cimg/base:stable
+
+jobs:
+  deploy:
+    executor: deployer
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "9a:8c:dc:1d:d2:eb:e3:19:16:79:49:61:22:0c:db:75"
+      - run:
+          name: Deploy Fider to Production
+          command: |
+            set -e
+            ssh -o StrictHostKeyChecking=no $FUTTO_EC2_USER@$FUTTO_EC2_LANDING_HOSTNAME "
+              # =================================================================
+              # PREPARE - Pull Latest Code
+              # =================================================================
+              echo '==================================================================='
+              echo 'Deploying Fider Roadmap Platform'
+              echo '==================================================================='
+
+              cd /home/$FUTTO_EC2_USER/containers/roadmap-futto
+
+              echo 'Pulling latest code from repository...'
+              git reset --hard
+              git clean -fd
+              git fetch --prune --all
+              git checkout <<pipeline.git.revision>>
+
+              # =================================================================
+              # ENVIRONMENT VARIABLES - Fider Configuration
+              # =================================================================
+              echo 'Setting environment variables...'
+              export FIDER_DB_PASSWORD='$FIDER_DB_PASSWORD'
+              export FIDER_JWT_SECRET='$FIDER_JWT_SECRET'
+              export BREVO_NOREPLY='$BREVO_NOREPLY'
+              export BREVO_SMTP_HOST='$BREVO_SMTP_HOST'
+              export BREVO_SMTP_USERNAME='$BREVO_SMTP_USERNAME'
+              export BREVO_SMTP_PASSWORD='$BREVO_SMTP_PASSWORD'
+
+              # =================================================================
+              # NGINX CONFIGURATION - Copy Fider Config to Landing Nginx
+              # =================================================================
+              echo 'Updating nginx configuration...'
+              cp nginx/fider.conf /home/$FUTTO_EC2_USER/containers/landing-futto/nginx/conf.d/fider.conf
+
+              # =================================================================
+              # DOCKER DEPLOYMENT - Build and Start Fider Container
+              # =================================================================
+              echo 'Building Fider Docker image from source...'
+              docker compose -f docker-compose.production.yml build --no-cache
+
+              echo 'Starting Fider container...'
+              docker compose -f docker-compose.production.yml up -d
+
+              # =================================================================
+              # NGINX RELOAD - Apply Configuration Changes
+              # =================================================================
+              echo 'Reloading nginx to apply configuration...'
+              docker exec futto-nginx nginx -s reload || echo 'Warning: nginx reload failed (may not be critical)'
+
+              # =================================================================
+              # HEALTH CHECK - Verify Deployment
+              # =================================================================
+              echo ''
+              echo 'Waiting for Fider to be healthy...'
+              sleep 10
+
+              # Check if container is running
+              if docker ps | grep -q futto-fider; then
+                echo ' Fider container is running'
+              else
+                echo ' Fider container is not running!'
+                docker ps -a | grep fider
+                exit 1
+              fi
+
+              # Check health status
+              HEALTH_STATUS=\$(docker inspect --format='{{.State.Health.Status}}' futto-fider 2>/dev/null || echo 'unknown')
+              echo \"Health status: \$HEALTH_STATUS\"
+
+              # =================================================================
+              # DEPLOYMENT COMPLETE
+              # =================================================================
+              echo ''
+              echo '==================================================================='
+              echo 'Deployment Complete!'
+              echo '==================================================================='
+              echo 'Service: Fider Roadmap Platform'
+              echo 'URL: https://roadmap.futto.fr'
+              echo 'Container: futto-fider'
+              echo 'Status:' \$(docker ps --filter name=futto-fider --format '{{.Status}}')
+              echo '==================================================================='
+
+              # Show recent logs
+              echo ''
+              echo 'Recent logs:'
+              docker logs --tail 20 futto-fider
+            "
+
+workflows:
+  deploy-fider:
+    jobs:
+      - deploy:
+          <<: *master_only
+          context:
+            - FUTTO_EC2
+            - FUTTO_CONTEXT_PRD

@@ -362,7 +362,7 @@ if err := bus.Dispatch(ctx, c); err != nil {
 
 **Port conflicts:**
 
-- Default ports: 3000 (app), 5432 (postgres), 8025 (mailhog)
+- Default ports: 3005 (app), 5432 (postgres), 8025 (mailhog)
 - Change in `.env` if needed
 
 ## Development Tips

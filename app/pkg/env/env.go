@@ -47,7 +47,7 @@ type config struct {
 		WriteTimeout time.Duration `env:"HTTP_WRITE_TIMEOUT,default=10s,strict"`
 		IdleTimeout  time.Duration `env:"HTTP_IDLE_TIMEOUT,default=120s,strict"`
 	}
-	Port                        string `env:"PORT,default=3000"`
+	Port                        string `env:"PORT,default=3005"`
 	Host                        string `env:"HOST,default="`
 	HostMode                    string `env:"HOST_MODE,default=single"`
 	HostDomain                  string `env:"HOST_DOMAIN"`

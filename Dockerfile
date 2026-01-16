@@ -59,7 +59,7 @@ COPY --from=ui-builder /ui/dist /app/dist
 COPY --from=ui-builder /ui/robots.txt /app
 COPY --from=ui-builder /ui/ssr.js /app
 
-EXPOSE 3000
+EXPOSE 3005
 
 HEALTHCHECK --timeout=5s CMD ./fider ping
 

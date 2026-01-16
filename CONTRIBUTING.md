@@ -47,7 +47,7 @@ If you know these technologies or would like to learn them, lucky you! This is t
 #### 3. To start the application
 
 1. run `make watch` to start both the server and ui on watch mode. The application will be reloaded every time a file is changed. Alternatively, it's also possible to start Fider by running `make build` and `make run`.
-2. Navigate to `http://localhost:3000/` and 🎉! You should see the sign up page of Fider!
+2. Navigate to `http://localhost:3005/` and 🎉! You should see the sign up page of Fider!
 
 #### 4. To run the unit tests:
 

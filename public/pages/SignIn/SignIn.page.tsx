@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { SignInControl, TenantLogo, LegalNotice } from "@fider/components"
 import { Trans } from "@lingui/react/macro"
 import { useFider } from "@fider/hooks"
@@ -33,6 +33,24 @@ const Private = (): JSX.Element => {
 
 export const SignInPage = () => {
   const fider = useFider()
+
+  // Auto-redirect to OAuth if there's only one provider and email auth is disabled
+  useEffect(() => {
+    const shouldAutoRedirect =
+      fider.settings.oauth.length === 1 &&
+      !fider.session.tenant.isEmailAuthAllowed
+
+    if (shouldAutoRedirect) {
+      const provider = fider.settings.oauth[0]
+      const redirect = new URLSearchParams(window.location.search).get("redirect")
+      const redirectTo = redirect && redirect.startsWith("/")
+        ? fider.settings.baseURL + redirect
+        : fider.settings.baseURL
+
+      // Redirect to OAuth provider
+      window.location.href = `${provider.url}?redirect=${redirectTo}`
+    }
+  }, [fider])
 
   const onCodeVerified = () => {
     // User is authenticated - redirect to the appropriate URL

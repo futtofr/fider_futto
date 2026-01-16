@@ -51,22 +51,19 @@ jobs:
               # ENVIRONMENT VARIABLES - Create .env File for Docker Compose
               # =================================================================
               echo 'Creating .env file for docker-compose...'
-              cat > .env <<'ENVFILE'
-# Fider Configuration
-FUTTO_ROADMAP_URL=$FUTTO_ROADMAP_URL
-FIDER_JWT_SECRET=$FIDER_JWT_SECRET
-FIDER_DB_PASSWORD=$FIDER_DB_PASSWORD
-
-# Brevo SMTP Configuration
-BREVO_NOREPLY=$BREVO_NOREPLY
-BREVO_SMTP_HOST=$BREVO_SMTP_HOST
-BREVO_SMTP_USERNAME=$BREVO_SMTP_USERNAME
-BREVO_SMTP_PASSWORD=$BREVO_SMTP_PASSWORD
-
-# Build Metadata
-VERSION=latest
-ENVFILE
-
+              echo '# Fider Configuration' > .env
+              echo \"FUTTO_ROADMAP_URL='$FUTTO_ROADMAP_URL'\" >> .env
+              echo \"FIDER_JWT_SECRET='$FIDER_JWT_SECRET'\" >> .env
+              echo \"FIDER_DB_PASSWORD='$FIDER_DB_PASSWORD'\" >> .env
+              echo '' >> .env
+              echo '# Brevo SMTP Configuration' >> .env
+              echo \"BREVO_NOREPLY='$BREVO_NOREPLY'\" >> .env
+              echo \"BREVO_SMTP_HOST='$BREVO_SMTP_HOST'\" >> .env
+              echo \"BREVO_SMTP_USERNAME='$BREVO_SMTP_USERNAME'\" >> .env
+              echo \"BREVO_SMTP_PASSWORD='$BREVO_SMTP_PASSWORD'\" >> .env
+              echo '' >> .env
+              echo '# Build Metadata' >> .env
+              echo 'VERSION=latest' >> .env
               echo '.env file created successfully'
 
               # =================================================================

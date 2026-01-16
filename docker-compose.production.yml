@@ -23,6 +23,7 @@ services:
         # Core Configuration
         PORT: "3005"
         BASE_URL: ${FUTTO_ROADMAP_URL}
+        FUTTO_ROADMAP_URL: ${FUTTO_ROADMAP_URL}
         JWT_SECRET: ${FIDER_JWT_SECRET}
 
         # Database Configuration
@@ -49,7 +50,7 @@ services:
       # Note: Environment variables are baked into .env file during build
       # These can override the baked-in values if needed
       PORT: "3005"
-      BASE_URL: https://roadmap.futto.fr
+      BASE_URL: ${FUTTO_ROADMAP_URL}
       DATABASE_URL: postgresql://fider_user:${FIDER_DB_PASSWORD}@futto-landing-postgres:5432/fider?sslmode=disable
       JWT_SECRET: ${FIDER_JWT_SECRET}
       EMAIL_NOREPLY: ${BREVO_NOREPLY}

@@ -3,7 +3,9 @@
     "allow": [
       "Bash(make lint:*)",
       "Bash(make build-ui:*)",
-      "Bash(make build-server:*)"
+      "Bash(make build-server:*)",
+      "Read(//Users/penielmateta/Sites/Futto/**)",
+      "Bash(docker compose:*)"
     ],
     "deny": [],
     "ask": []

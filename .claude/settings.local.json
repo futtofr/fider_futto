@@ -5,7 +5,8 @@
       "Bash(make build-ui:*)",
       "Bash(make build-server:*)",
       "Read(//Users/penielmateta/Sites/Futto/**)",
-      "Bash(docker compose:*)"
+      "Bash(docker compose:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

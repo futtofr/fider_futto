@@ -144,3 +144,4 @@ workflows:
           context:
             - FUTTO_EC2
             - FUTTO_CONTEXT_PRD
+            - FUTTO_CONTEXT_ALL

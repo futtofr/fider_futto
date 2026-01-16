@@ -48,23 +48,34 @@ jobs:
               git checkout <<pipeline.git.revision>>
 
               # =================================================================
-              # ENVIRONMENT VARIABLES - Create .env File for Docker Compose
+              # ENVIRONMENT VARIABLES - Export in Remote Session
+              # =================================================================
+              export FUTTO_ROADMAP_URL='$FUTTO_ROADMAP_URL'
+              export FIDER_JWT_SECRET='$FIDER_JWT_SECRET'
+              export FIDER_DB_PASSWORD='$FIDER_DB_PASSWORD'
+              export BREVO_NOREPLY='$BREVO_NOREPLY'
+              export BREVO_SMTP_HOST='$BREVO_SMTP_HOST'
+              export BREVO_SMTP_USERNAME='$BREVO_SMTP_USERNAME'
+              export BREVO_SMTP_PASSWORD='$BREVO_SMTP_PASSWORD'
+
+              # =================================================================
+              # Create .env File for Docker Compose
               # =================================================================
               echo 'Creating .env file for docker-compose...'
-              echo '# Fider Configuration' > .env
-              echo \"FUTTO_ROADMAP_URL='$FUTTO_ROADMAP_URL'\" >> .env
-              echo \"FIDER_JWT_SECRET='$FIDER_JWT_SECRET'\" >> .env
-              echo \"FIDER_DB_PASSWORD='$FIDER_DB_PASSWORD'\" >> .env
-              echo '' >> .env
-              echo '# Brevo SMTP Configuration' >> .env
-              echo \"BREVO_NOREPLY='$BREVO_NOREPLY'\" >> .env
-              echo \"BREVO_SMTP_HOST='$BREVO_SMTP_HOST'\" >> .env
-              echo \"BREVO_SMTP_USERNAME='$BREVO_SMTP_USERNAME'\" >> .env
-              echo \"BREVO_SMTP_PASSWORD='$BREVO_SMTP_PASSWORD'\" >> .env
-              echo '' >> .env
-              echo '# Build Metadata' >> .env
-              echo 'VERSION=latest' >> .env
-              echo '.env file created successfully'
+              printf '# Fider Configuration\n' > .env
+              printf 'FUTTO_ROADMAP_URL=%s\n' \"\$FUTTO_ROADMAP_URL\" >> .env
+              printf 'FIDER_JWT_SECRET=%s\n' \"\$FIDER_JWT_SECRET\" >> .env
+              printf 'FIDER_DB_PASSWORD=%s\n' \"\$FIDER_DB_PASSWORD\" >> .env
+              printf '\n# Brevo SMTP Configuration\n' >> .env
+              printf 'BREVO_NOREPLY=%s\n' \"\$BREVO_NOREPLY\" >> .env
+              printf 'BREVO_SMTP_HOST=%s\n' \"\$BREVO_SMTP_HOST\" >> .env
+              printf 'BREVO_SMTP_USERNAME=%s\n' \"\$BREVO_SMTP_USERNAME\" >> .env
+              printf 'BREVO_SMTP_PASSWORD=%s\n' \"\$BREVO_SMTP_PASSWORD\" >> .env
+              printf '\n# Build Metadata\n' >> .env
+              printf 'VERSION=latest\n' >> .env
+
+              echo '.env file created successfully:'
+              cat .env
 
               # =================================================================
               # NGINX CONFIGURATION - Copy Fider Config to Landing Nginx

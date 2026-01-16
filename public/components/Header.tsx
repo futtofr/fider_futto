@@ -39,7 +39,7 @@ export const Header = (props: HeaderProps) => {
             <HStack spacing={6}>
               <a href="/" className="flex flex-x flex-items-center flex--spacing-2 h-8">
                 <TenantLogo size={100} />
-                <h1 className="text-header">{fider.session.tenant.name}</h1>
+                <h1 className="text-header sm:hidden">{fider.session.tenant.name}</h1>
               </a>
               {fider.session.isAuthenticated && (
                 <nav className="flex flex-x flex-items-center flex--spacing-4">

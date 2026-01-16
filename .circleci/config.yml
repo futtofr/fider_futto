@@ -51,22 +51,21 @@ jobs:
               # ENVIRONMENT VARIABLES - Create .env File for Docker Compose
               # =================================================================
               echo 'Creating .env file for docker-compose...'
-              cat > .env << ENVFILE
-              # Fider Configuration
-              FUTTO_ROADMAP_URL='$FUTTO_ROADMAP_URL'
-              FIDER_JWT_SECRET='$FIDER_JWT_SECRET'
-              FIDER_DB_PASSWORD='$FIDER_DB_PASSWORD'
-              
-              # Brevo SMTP Configuration
-              BREVO_NOREPLY='$BREVO_NOREPLY'
-              BREVO_SMTP_HOST='$BREVO_SMTP_HOST'
-              BREVO_SMTP_USERNAME='$BREVO_SMTP_USERNAME'
-              BREVO_SMTP_PASSWORD='$BREVO_SMTP_PASSWORD'
-              
-              # Build Metadata
-              COMMITHASH=<<pipeline.git.revision>>
-              VERSION=latest
-              ENVFILE
+              cat > .env <<'ENVFILE'
+# Fider Configuration
+FUTTO_ROADMAP_URL=$FUTTO_ROADMAP_URL
+FIDER_JWT_SECRET=$FIDER_JWT_SECRET
+FIDER_DB_PASSWORD=$FIDER_DB_PASSWORD
+
+# Brevo SMTP Configuration
+BREVO_NOREPLY=$BREVO_NOREPLY
+BREVO_SMTP_HOST=$BREVO_SMTP_HOST
+BREVO_SMTP_USERNAME=$BREVO_SMTP_USERNAME
+BREVO_SMTP_PASSWORD=$BREVO_SMTP_PASSWORD
+
+# Build Metadata
+VERSION=latest
+ENVFILE
 
               echo '.env file created successfully'
 

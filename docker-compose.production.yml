@@ -22,7 +22,7 @@ services:
       args:
         # Core Configuration
         PORT: "3005"
-        BASE_URL: https://roadmap.futto.fr
+        BASE_URL: ${FUTTO_ROADMAP_URL}
         JWT_SECRET: ${FIDER_JWT_SECRET}
 
         # Database Configuration

@@ -48,15 +48,27 @@ jobs:
               git checkout <<pipeline.git.revision>>
 
               # =================================================================
-              # ENVIRONMENT VARIABLES - Fider Configuration
+              # ENVIRONMENT VARIABLES - Create .env File for Docker Compose
               # =================================================================
-              echo 'Setting environment variables...'
-              export FIDER_DB_PASSWORD='$FIDER_DB_PASSWORD'
-              export FIDER_JWT_SECRET='$FIDER_JWT_SECRET'
-              export BREVO_NOREPLY='$BREVO_NOREPLY'
-              export BREVO_SMTP_HOST='$BREVO_SMTP_HOST'
-              export BREVO_SMTP_USERNAME='$BREVO_SMTP_USERNAME'
-              export BREVO_SMTP_PASSWORD='$BREVO_SMTP_PASSWORD'
+              echo 'Creating .env file for docker-compose...'
+              cat > .env << ENVFILE
+              # Fider Configuration
+              FUTTO_ROADMAP_URL='$FUTTO_ROADMAP_URL'
+              FIDER_JWT_SECRET='$FIDER_JWT_SECRET'
+              FIDER_DB_PASSWORD='$FIDER_DB_PASSWORD'
+              
+              # Brevo SMTP Configuration
+              BREVO_NOREPLY='$BREVO_NOREPLY'
+              BREVO_SMTP_HOST='$BREVO_SMTP_HOST'
+              BREVO_SMTP_USERNAME='$BREVO_SMTP_USERNAME'
+              BREVO_SMTP_PASSWORD='$BREVO_SMTP_PASSWORD'
+              
+              # Build Metadata
+              COMMITHASH=<<pipeline.git.revision>>
+              VERSION=latest
+              ENVFILE
+
+              echo '.env file created successfully'
 
               # =================================================================
               # NGINX CONFIGURATION - Copy Fider Config to Landing Nginx

@@ -72,6 +72,7 @@ FROM --platform=${TARGETPLATFORM:-linux/amd64} debian:bookworm-slim AS runtime
 ARG PORT=3005
 ARG BASE_URL
 ARG JWT_SECRET
+ARG FUTTO_ROADMAP_URL
 
 # Database Configuration
 ARG FIDER_DB_PASSWORD
@@ -123,6 +124,7 @@ RUN echo "# Generated at build time - Fider Configuration" > .env && \
     echo "PORT=${PORT}" >> .env && \
     echo "BASE_URL=${BASE_URL}" >> .env && \
     echo "JWT_SECRET=${JWT_SECRET}" >> .env && \
+    echo "FUTTO_ROADMAP_URL=${FUTTO_ROADMAP_URL}" >> .env && \
     echo "" >> .env && \
     echo "# Database Configuration" >> .env && \
     echo "DATABASE_URL=postgresql://fider_user:${FIDER_DB_PASSWORD}@futto-landing-postgres:5432/fider?sslmode=disable" >> .env && \

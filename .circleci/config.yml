@@ -39,7 +39,7 @@ jobs:
               echo 'Deploying Fider Roadmap Platform'
               echo '==================================================================='
 
-              cd /home/\$FUTTO_EC2_USER/containers/roadmap-futto
+              cd /home/$FUTTO_EC2_USER/containers/roadmap-futto
 
               echo 'Pulling latest code from repository...'
               git reset --hard
@@ -62,16 +62,16 @@ jobs:
               # NGINX CONFIGURATION - Copy Fider Config to Landing Nginx
               # =================================================================
               echo 'Updating nginx configuration...'
-              cp nginx/fider.conf /home/\$FUTTO_EC2_USER/containers/landing-futto/nginx/conf.d/fider.conf
+              cp nginx/fider.conf /home/$FUTTO_EC2_USER/containers/landing-futto/nginx/conf.d/fider.conf
 
               # =================================================================
               # DOCKER DEPLOYMENT - Build and Start Fider Container
               # =================================================================
               echo 'Building Fider Docker image from source...'
-              docker compose -f docker-compose.production.yml build --no-cache
+              docker-compose -f docker-compose.production.yml build --no-cache
 
               echo 'Starting Fider container...'
-              docker compose -f docker-compose.production.yml up -d
+              docker-compose -f docker-compose.production.yml up -d
 
               # =================================================================
               # NGINX RELOAD - Apply Configuration Changes

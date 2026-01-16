@@ -39,7 +39,7 @@ jobs:
               echo 'Deploying Fider Roadmap Platform'
               echo '==================================================================='
 
-              cd /home/$FUTTO_EC2_USER/containers/roadmap-futto
+              cd /home/\$FUTTO_EC2_USER/containers/roadmap-futto
 
               echo 'Pulling latest code from repository...'
               git reset --hard
@@ -62,7 +62,7 @@ jobs:
               # NGINX CONFIGURATION - Copy Fider Config to Landing Nginx
               # =================================================================
               echo 'Updating nginx configuration...'
-              cp nginx/fider.conf /home/$FUTTO_EC2_USER/containers/landing-futto/nginx/conf.d/fider.conf
+              cp nginx/fider.conf /home/\$FUTTO_EC2_USER/containers/landing-futto/nginx/conf.d/fider.conf
 
               # =================================================================
               # DOCKER DEPLOYMENT - Build and Start Fider Container
@@ -77,7 +77,7 @@ jobs:
               # NGINX RELOAD - Apply Configuration Changes
               # =================================================================
               echo 'Reloading nginx to apply configuration...'
-              docker exec futto-nginx nginx -s reload || echo 'Warning: nginx reload failed (may not be critical)'
+              docker exec futto-nginx nginx -s reload || echo 'Warning: nginx reload failed'
 
               # =================================================================
               # HEALTH CHECK - Verify Deployment
@@ -88,16 +88,16 @@ jobs:
 
               # Check if container is running
               if docker ps | grep -q futto-fider; then
-                echo ' Fider container is running'
+                echo 'Fider container is running'
               else
-                echo ' Fider container is not running!'
+                echo 'ERROR: Fider container is not running!'
                 docker ps -a | grep fider
                 exit 1
               fi
 
-              # Check health status
-              HEALTH_STATUS=\$(docker inspect --format='{{.State.Health.Status}}' futto-fider 2>/dev/null || echo 'unknown')
-              echo \"Health status: \$HEALTH_STATUS\"
+              # Check container health
+              echo 'Container status:'
+              docker ps --filter name=futto-fider
 
               # =================================================================
               # DEPLOYMENT COMPLETE
@@ -109,7 +109,6 @@ jobs:
               echo 'Service: Fider Roadmap Platform'
               echo 'URL: https://roadmap.futto.fr'
               echo 'Container: futto-fider'
-              echo 'Status:' \$(docker ps --filter name=futto-fider --format '{{.Status}}')
               echo '==================================================================='
 
               # Show recent logs
